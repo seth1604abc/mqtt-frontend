@@ -1,13 +1,15 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-// import LoginAndRegister from './components/LoginAndRegister.vue'
-import HelloWord from './components/HelloWorld.vue'
-
-// const test = { template: '<div>Home</div>' }
+import LoginAndRegister from './components/LoginAndRegister.vue'
+import TestComponent from './components/TestComponent.vue'
 
 const routes = [
     {
         path: '/',
-        component: HelloWord
+        component: LoginAndRegister
+    },
+    {
+        path: '/test',
+        component: TestComponent
     }
 ]
 
