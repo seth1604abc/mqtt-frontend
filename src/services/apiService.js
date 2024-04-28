@@ -3,7 +3,7 @@ import axios from 'axios'
 export async function sendRequest(method, url, data = null) {
     let resData = { status: 500, message: 'api error' }
     let reqUrl = `${process.env.VUE_APP_API_BASE_URL}/${url}`
-    console.log(reqUrl)
+
     try {
         if (method == 'get') {
             resData = await axios.get(reqUrl)
@@ -13,7 +13,7 @@ export async function sendRequest(method, url, data = null) {
             return resData.data
         }
     } catch (err) {
-        console.log(err)
+        // console.log(err)
     }
 
     return resData

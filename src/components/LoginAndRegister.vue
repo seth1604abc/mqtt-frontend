@@ -82,14 +82,14 @@ const registerName = ref("");
 const registerEmail = ref("");
 
 const submitRegisterForm = async () => {
-  const res = await sendRequest("post", "auth/register", {
+  await sendRequest("post", "auth/register", {
     account: registerAccount,
     password: registerPassword,
     name: registerName,
     email: registerEmail,
   });
 
-  console.log(res);
+  // console.log(res);
 };
 </script>
 
