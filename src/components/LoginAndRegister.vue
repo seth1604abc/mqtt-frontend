@@ -65,14 +65,55 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { sendRequest } from "@/services/apiService";
+import Swal from "sweetalert2";
+
+const router = useRouter();
+
+const failedLoginAlert = (text) => {
+  Swal.fire({
+    title: "登入失敗",
+    text,
+    icon: "error",
+    confirmButtonText: "確認",
+  });
+};
+
+const failedRegisterAlert = (text) => {
+  Swal.fire({
+    title: "註冊失敗",
+    text,
+    icon: "error",
+    confirmButtonText: "確認",
+  });
+};
 
 const loginUserName = ref("");
 const loginPassword = ref("");
 
 const submitLoginForm = async () => {
-  // console.log("username:", loginUserName.value);
-  // console.log("password:", loginPassword.value);
+  const data = await sendRequest("post", "auth/login", {
+    account: loginUserName.value,
+    password: loginPassword.value,
+  });
+  console.log(data);
+
+  if (data.code != 200) {
+    if (data.code == 404002) {
+      failedLoginAlert("無此帳號");
+      return;
+    } else if (data.code == 401002) {
+      failedLoginAlert("密碼錯誤");
+      return;
+    } else {
+      failedLoginAlert("未知錯誤");
+      return;
+    }
+  }
+
+  localStorage.setItem("token", data.accessToken);
+  router.push({ name: "Device" });
 };
 
 const registerAccount = ref("");
@@ -82,14 +123,30 @@ const registerName = ref("");
 const registerEmail = ref("");
 
 const submitRegisterForm = async () => {
-  await sendRequest("post", "auth/register", {
-    account: registerAccount,
-    password: registerPassword,
-    name: registerName,
-    email: registerEmail,
+  if (registerPassword.value != registerPasswordRepeat.value) {
+    failedRegisterAlert("密碼不相同");
+    return;
+  }
+
+  const result = await sendRequest("post", "auth/register", {
+    account: registerAccount.value,
+    password: registerPassword.value,
+    name: registerName.value,
+    email: registerEmail.value,
   });
 
-  // console.log(res);
+  if (result.code != 200) {
+    // console.log({ result });
+    if (result.code == 409001) {
+      failedRegisterAlert("帳號已存在");
+    } else if (result.code == 400001) {
+      failedRegisterAlert("請填寫正確欄位");
+    } else {
+      failedRegisterAlert("未知的錯誤");
+    }
+
+    return;
+  }
 };
 </script>
 
